@@ -1,0 +1,104 @@
+erDiagram
+  ATLETAS ||--|| NACIONALIDADES : "pertenece a"
+  ATLETAS ||--|| CATEGORIAS : "clasificado en"
+  ATLETAS ||--|| CLUBES : "miembro de"
+  ATLETAS ||--o{ PARTICIPACIONES : "participa en"
+  EVENTOS ||--o{ PARTICIPACIONES : "registra"
+  DISCIPLINAS ||--o{ PARTICIPACIONES : "incluye"
+  ATLETAS ||--o{ ENTRENAMIENTOS : "realiza"
+  ENTRENADORES ||--o{ ENTRENAMIENTOS : "dirige"
+  ATLETAS ||--o{ LESIONES : "sufre"
+  ATLETAS ||--o{ HISTORIAL_MEDICO : "tiene"
+
+  ATLETAS {
+    INT id_atleta PK
+    VARCHAR nombre
+    VARCHAR apellido
+    DATE fecha_nacimiento
+    CHAR genero
+    DECIMAL peso
+    DECIMAL estatura
+  }
+
+  NACIONALIDADES {
+    INT id_nacionalidad PK
+    VARCHAR pais
+    CHAR codigo_iso
+    VARCHAR continente
+  }
+
+  CATEGORIAS {
+    INT id_categoria PK
+    VARCHAR nombre_categoria
+    TEXT descripcion
+  }
+
+  CLUBES {
+    INT id_club PK
+    VARCHAR nombre_club
+    VARCHAR ciudad
+    VARCHAR pais
+    DATE fecha_fundacion
+    TEXT descripcion
+  }
+
+  DISCIPLINAS {
+    INT id_disciplina PK
+    VARCHAR nombre
+    TEXT descripcion
+  }
+
+  EVENTOS {
+    INT id_evento PK
+    VARCHAR nombre_evento
+    DATE fecha_inicio
+    DATE fecha_fin
+    VARCHAR ubicacion
+    TEXT descripcion
+  }
+
+  PARTICIPACIONES {
+    INT id_participacion PK
+    INT id_atleta FK
+    INT id_evento FK
+    INT id_disciplina FK
+    VARCHAR resultado
+    INT puesto
+  }
+
+  ENTRENADORES {
+    INT id_entrenador PK
+    VARCHAR nombre
+    VARCHAR apellido
+    VARCHAR especialidad
+    VARCHAR telefono
+    VARCHAR correo_electronico
+  }
+
+  ENTRENAMIENTOS {
+    INT id_entrenamiento PK
+    INT id_atleta FK
+    INT id_entrenador FK
+    DATE fecha
+    INT duracion
+    TEXT descripcion
+    VARCHAR intensidad
+  }
+
+  LESIONES {
+    INT id_lesion PK
+    INT id_atleta FK
+    DATE fecha_lesion
+    VARCHAR tipo_lesion
+    TEXT descripcion
+    DATE fecha_recuperacion
+  }
+
+  HISTORIAL_MEDICO {
+    INT id_historial PK
+    INT id_atleta FK
+    DATE fecha
+    TEXT descripcion
+    TEXT diagnostico
+    TEXT tratamiento
+  }
