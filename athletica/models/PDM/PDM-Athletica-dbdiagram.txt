@@ -1,0 +1,124 @@
+// Sports/Athletic Management System Database Schema
+// Database: olympus (PostgreSQL)
+
+Table olympus.nationalities {
+  nationality_id int [pk, increment]
+  name varchar(100) [not null]
+  
+  Note: 'Master table for athlete nationalities'
+}
+
+Table olympus.categories {
+  category_id int [pk, increment]
+  name varchar(50) [not null]
+  min_age int
+  max_age int
+  
+  Note: 'Classification categories for athletes with age ranges'
+}
+
+Table olympus.clubs {
+  club_id int [pk, increment]
+  name varchar(100) [not null]
+  city varchar(100)
+  country varchar(100)
+  
+  Note: 'Sports clubs and organizations that athletes belong to'
+}
+
+Table olympus.disciplines {
+  discipline_id int [pk, increment]
+  name varchar(100) [not null]
+  
+  Note: 'Sports disciplines and specialties'
+}
+
+Table olympus.events {
+  event_id int [pk, increment]
+  name varchar(100) [not null]
+  date date
+  location varchar(100)
+  
+  Note: 'Sports events and competitions'
+}
+
+Table olympus.coaches {
+  coach_id int [pk, increment]
+  name varchar(100) [not null]
+  specialty varchar(100)
+  
+  Note: 'Coaches and training staff'
+}
+
+Table olympus.athletes {
+  athlete_id int [pk, increment]
+  name varchar(100) [not null]
+  birth_date date
+  gender varchar(10) [note: 'CHECK (gender IN (Male, Female, Other))']
+  nationality_id int [ref: > olympus.nationalities.nationality_id]
+  category_id int [ref: > olympus.categories.category_id]
+  club_id int [ref: > olympus.clubs.club_id]
+  
+  Note: 'Main athletes table with personal information'
+}
+
+Table olympus.participations {
+  participation_id int [pk, increment]
+  athlete_id int [ref: > olympus.athletes.athlete_id, not null]
+  event_id int [ref: > olympus.events.event_id, not null]
+  discipline_id int [ref: > olympus.disciplines.discipline_id, not null]
+  result varchar(100)
+  position int
+  
+  Note: 'Records of athlete participation in events and their results'
+}
+
+Table olympus.trainings {
+  training_id int [pk, increment]
+  athlete_id int [ref: > olympus.athletes.athlete_id, not null]
+  coach_id int [ref: > olympus.coaches.coach_id, not null]
+  date date
+  duration_minutes int
+  training_type varchar(100)
+  
+  Note: 'Training sessions with details and coaching assignments'
+}
+
+Table olympus.injuries {
+  injury_id int [pk, increment]
+  athlete_id int [ref: > olympus.athletes.athlete_id, not null]
+  description text
+  date date
+  estimated_duration_days int
+  
+  Note: 'Injury records and recovery tracking for athletes'
+}
+
+Table olympus.medical_history {
+  history_id int [pk, increment]
+  athlete_id int [ref: > olympus.athletes.athlete_id, not null]
+  date date
+  observations text
+  
+  Note: 'Complete medical history and health records for athletes'
+}
+
+Table olympus.users {
+  user_id int [pk, increment]
+  username varchar(50) [not null, unique]
+  password varchar(255) [not null]
+  role varchar(50)
+  athlete_id int [ref: > olympus.athletes.athlete_id]
+  coach_id int [ref: > olympus.coaches.coach_id]
+  
+  Note: 'System users for authentication and authorization'
+}
+
+// Indexes
+// idx_athletes_name ON olympus.athletes(name)
+// idx_events_date ON olympus.events(date)
+// idx_participations_position ON olympus.participations(position)
+// idx_trainings_date ON olympus.trainings(date)
+// idx_injuries_date ON olympus.injuries(date)
+// idx_medical_history_date ON olympus.medical_history(date)
+// idx_users_username ON olympus.users(username)
