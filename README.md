@@ -1,4 +1,3 @@
-# BDI-G4-ATHLETICA
 
 # BDI-G4-Athletica
 
