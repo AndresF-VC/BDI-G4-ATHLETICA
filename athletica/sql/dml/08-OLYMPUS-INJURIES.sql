@@ -1,0 +1,16 @@
+INSERT INTO olympus.injuries (athlete_id, description, date, estimated_duration_days) VALUES
+  (1, 'Strained hamstring',         '2024-11-20', 30),
+  (2, 'Stress fracture in foot',    '2025-01-15', 60),
+  (3, 'Shoulder tendonitis',        '2025-02-10', 45),
+  (5, 'Ankle sprain',               '2025-03-01', 21),
+  (7, 'Lower back pain',            '2025-04-18', 14),
+  (4,  'Achilles tendonitis',        '2025-03-05', 30),
+  (6,  'Swimmer''s shoulder',        '2024-12-15', 45),
+  (8,  'Patellar tendinopathy',      '2025-02-20', 60),
+  (9,  'Wrist sprain',               '2025-04-12', 14),
+  (10, 'Hip bursitis',               '2025-01-25', 21),
+  (2,  'Iliotibial band syndrome',   '2025-05-02', 20),
+  (3,  'Quad muscle strain',         '2025-04-08', 25),
+  (5,  'Shin splints',               '2025-03-18', 35),
+  (7,  'Lower back disc irritation','2025-02-10', 28),
+  (1,  'Minor calf tear',            '2025-05-15', 18);
