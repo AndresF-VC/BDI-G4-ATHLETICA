@@ -1,113 +1,70 @@
-INSERT INTO olympus.users (username, password, role, athlete_id, coach_id)
+-- =============================================================================
+-- 12-OLYMPUS-USERS.sql
+--
+-- Objetivo: Poblar la tabla de usuarios. Replica la lógica del script de Python:
+-- 1. Crea usuarios con su rol.
+-- 2. Asigna un atleta ÚNICO a cada usuario de rol 'athlete'.
+-- 3. Asigna un entrenador aleatorio a cada usuario de rol 'coach'.
+-- 4. Usa una contraseña fija 'password123' para todos, como en el script.
+-- =============================================================================
+WITH users_data AS (
+    SELECT
+        username,
+        role,
+        -- Asignamos un número de fila a cada usuario para poder hacer un join único
+        row_number() OVER() as rn
+    FROM (
+        VALUES
+        ('johnsonjoshua', 'athlete'), ('thomas26', 'athlete'), ('crescencia31', 'athlete'), ('fernandosevilla', 'athlete'),
+        ('qcocci', 'coach'), ('dwright', 'athlete'), ('natalia93', 'admin'), ('wbohnbach', 'admin'),
+        ('christophemaillot', 'admin'), ('mjesus', 'coach'), ('rogerpinto', 'coach'), ('robinsonarthur', 'athlete'),
+        ('brianromero', 'admin'), ('tygo51', 'athlete'), ('gracia12', 'admin'), ('maria-manuela24', 'athlete'),
+        ('griseldacalderon', 'athlete'), ('de-haasnora', 'athlete'), ('antoine14', 'coach'), ('chartiervincent', 'athlete'),
+        ('stoffelszmaurits', 'athlete'), ('helmuth32', 'athlete'), ('jbenigni', 'admin'), ('maria-dolores87', 'coach'),
+        ('martinemily', 'admin'), ('amanda70', 'coach'), ('nverbruggen', 'admin'), ('gilbertreynaud', 'admin'),
+        ('claudiomanzoni', 'coach'), ('liviatrentin', 'admin'), ('ljunk', 'coach'), ('siempeterse', 'coach'),
+        ('guilherme34', 'admin'), ('herrmannthekla', 'coach'), ('ljordan', 'admin'), ('kevintrapp', 'athlete'),
+        ('scott74', 'coach'), ('llettiere', 'coach'), ('brandon16', 'admin'), ('milovan-der-zijl', 'coach'),
+        ('selinavan-de-pavert', 'coach'), ('usantoro', 'athlete'), ('noortje17', 'athlete'), ('williamsonjimmy', 'athlete'),
+        ('kescolano', 'coach'), ('felicia64', 'admin'), ('matthieu39', 'admin'), ('robin74', 'admin'),
+        ('rzijlmans', 'admin'), ('arcosmarco', 'coach'), ('paganinigian', 'admin'), ('lillyrosemann', 'admin'),
+        ('odescalchimonica', 'coach'), ('araujomaria-luiza', 'athlete'), ('ycabezas', 'admin'), ('clementeric', 'admin'),
+        ('ermannosonnino', 'coach'), ('escuderoruth', 'admin'), ('daviesabdul', 'coach'), ('maria-fernandacervantes', 'coach'),
+        ('tallen', 'athlete'), ('ross52', 'athlete'), ('omoraleda', 'coach'), ('salgaripaloma', 'coach'),
+        ('sina46', 'athlete'), ('mauriziomastroianni', 'admin'), ('kyle35', 'admin'), ('rfonseca', 'athlete'),
+        ('mcastro', 'coach'), ('richard60', 'admin'), ('da-cunhapedro', 'athlete'), ('kellysmith', 'athlete'),
+        ('palaumodesta', 'coach'), ('caiovieira', 'coach'), ('flavio77', 'coach'), ('acostarhonda', 'admin'),
+        ('michael90', 'coach'), ('geraldine73', 'athlete'), ('nadiapardo', 'admin'), ('lucianoborgia', 'coach'),
+        ('emanuel43', 'athlete'), ('larapinto', 'admin'), ('ninthe55', 'admin'), ('dmoraes', 'coach'),
+        ('sofialamas', 'coach'), ('nicole52', 'athlete'), ('corinne88', 'admin'), ('rcomisso', 'athlete'),
+        ('whitney78', 'coach'), ('ybailey', 'coach'), ('derrick99', 'coach'), ('mitchell01', 'athlete'),
+        ('danielroland', 'admin'), ('glaunay', 'athlete'), ('davirios', 'coach'), ('zvan-der-loo', 'admin'),
+        ('melissa71', 'athlete'), ('williamsmelvin', 'admin'), ('diego28', 'admin'), ('xbonneau', 'admin')
+    ) AS u(username, role)
+),
+athletes_numbered AS (
+    -- Asignamos un número de fila a cada atleta para poder asignarlo de forma única
+    SELECT id as athlete_id, row_number() OVER (ORDER BY id) as rn
+    FROM olympus.athletes
+)
+INSERT INTO olympus.users (username, email, password, role, athlete_id, coach_id)
 SELECT
-  u.username,
-  u.password,
-  u.role,
-  CASE WHEN u.role = 'athlete' THEN (floor(random()*100)+1)::int ELSE NULL END,
-  CASE
-    WHEN u.role = 'coach'   THEN (floor(random()*5)+1)::int
-    WHEN u.role = 'athlete' THEN (floor(random()*5)+1)::int
-    ELSE NULL
-  END
-FROM (VALUES
-  ('johnsonjoshua',       'cs&2#4Xd$a',    'athlete'),
-  ('thomas26',            'w4&*EWgg^y',    'athlete'),
-  ('crescencia31',        'y3YGLn0E!j',    'athlete'),
-  ('fernandosevilla',     'Tco&44Uw3v',    'athlete'),
-  ('qcocci',              'Rr3VEzXOh#',    'coach'),
-  ('dwright',             'c4RhaD9+(f',    'athlete'),
-  ('natalia93',           '#fRYB@urn5',    'admin'),
-  ('wbohnbach',           'N27qJERv(B',    'admin'),
-  ('christophemaillot',   'V!R%%#Ch!9',    'admin'),
-  ('mjesus',              'EI1VaZ%n@(',    'coach'),
-  ('rogerpinto',          '$S1Onxzo0N',    'coach'),
-  ('robinsonarthur',      '*zTf+9xwN4',    'athlete'),
-  ('brianromero',         'b5(#1TcJVQ',    'admin'),
-  ('tygo51',              's^37TrrF!7',    'athlete'),
-  ('gracia12',            '%1WfDYxOso',    'admin'),
-  ('maria-manuela24',     '#!^7RwnV_)',    'athlete'),
-  ('griseldacalderon',    'hu^8N1t1uj',    'athlete'),
-  ('de-haasnora',         'mMAk7HgC!x',    'athlete'),
-  ('antoine14',           '#KfIWbGU9e',    'coach'),
-  ('chartiervincent',     'fA5IV9dJv)',    'athlete'),
-  ('stoffelszmaurits',    'WsK6PZxga$',    'athlete'),
-  ('helmuth32',           'X!0HUfpH_c',    'athlete'),
-  ('jbenigni',            'lb1WOrXe$n',    'admin'),
-  ('maria-dolores87',     '^98BR3Io_%',    'coach'),
-  ('martinemily',         'piGWEhpa&9',    'admin'),
-  ('amanda70',            '&f5uyRVvb&',    'coach'),
-  ('nverbruggen',         '*5wKnMh$wy',    'admin'),
-  ('gilbertreynaud',      'M6F1Sfg0B_',    'admin'),
-  ('claudiomanzoni',      'kT_Ra9ZdJO',    'coach'),
-  ('liviatrentin',        'ujMnV4Tz8_',    'admin'),
-  ('ljunk',               '*3WLTQ2zIT',    'coach'),
-  ('siempeterse',         'SD9LELAp%B',    'coach'),
-  ('guilherme34',         '@R8y5F)jO$',    'admin'),
-  ('herrmannthekla',      'OUcCmwm6*1',    'coach'),
-  ('ljordan',             '%x*i47StS&',    'admin'),
-  ('kevintrapp',          '%7CVv2(4+7',    'athlete'),
-  ('scott74',             '+KIrqW@4b6',    'coach'),
-  ('llettiere',           '6UIB*+Ip)H',    'coach'),
-  ('brandon16',           '(0QYOK$r)V',    'admin'),
-  ('milovan-der-zijl',    '4o8NZ+vc!I',    'coach'),
-  ('selinavan-de-pavert', 'jp2k7Cfi+a',    'coach'),
-  ('usantoro',            '$jShemGm3y',    'athlete'),
-  ('noortje17',           'fIa+M8Oa@p',    'athlete'),
-  ('williamsonjimmy',     '&y_4*Hx#C%',    'athlete'),
-  ('kescolano',           'X1T_M66m#s',    'coach'),
-  ('felicia64',           '**GEGd@mH4',    'admin'),
-  ('matthieu39',          'sZ2KUd&9%0',    'admin'),
-  ('robin74',             '+^h4Zbdo5&',    'admin'),
-  ('rzijlmans',           'm+(54rSm4%',    'admin'),
-  ('arcosmarco',          'r*Lbgw1h+D',    'coach'),
-  ('paganinigian',        '*cSHEl2)o7',    'admin'),
-  ('lillyrosemann',       '$1YCrs!p_)',    'admin'),
-  ('odescalchimonica',    '$$gQKNjPa9',    'coach'),
-  ('araujomaria-luiza',   'Ot^^V%8d&6',    'athlete'),
-  ('ycabezas',            'qS+J1UnufB',    'admin'),
-  ('clementeric',         '&)%wXxIqv1',    'admin'),
-  ('ermannosonnino',      '$i1lLrmXZ@',    'coach'),
-  ('escuderoruth',        '#mV&RFL+B9',    'admin'),
-  ('daviesabdul',         '*8hPJ8tOb6',    'coach'),
-  ('maria-fernandacervantes','%41GePKd^p','coach'),
-  ('tallen',              'H60wJddK_K',    'athlete'),
-  ('ross52',              'R@8DwZ_d6U',    'athlete'),
-  ('omoraleda',           'M2kVE^c#^O',    'coach'),
-  ('salgaripaloma',       'N+K*sDet)3',    'coach'),
-  ('sina46',              '$&5CTV6pxt',    'athlete'),
-  ('mauriziomastroianni','e6TZCEtw_t',    'admin'),
-  ('kyle35',              '+93PRgHeq*',    'admin'),
-  ('rfonseca',            '9hLR3lOt+w',    'athlete'),
-  ('mcastro',             'Z)2Ioobi8s',    'coach'),
-  ('richard60',           '&&LB*eCh#8',    'admin'),
-  ('da-cunhapedro',       't(9X$JkL#8',    'athlete'),
-  ('kellysmith',          '^bQE3SnP@q',    'athlete'),
-  ('palaumodesta',        '@5Hh)EDxnc',    'coach'),
-  ('caiovieira',          'Q$S6h0KjqC',    'coach'),
-  ('flavio77',            '&J^z18Iz9K',    'coach'),
-  ('acostarhonda',        ')6IZElcu_W',    'admin'),
-  ('michael90',           'w2iURHVo)g',    'coach'),
-  ('geraldine73',         '24W0pzlx)b',    'athlete'),
-  ('nadiapardo',          'k5OEUMDg(3',    'admin'),
-  ('lucianoborgia',       'Dq*7VqKt%)',    'coach'),
-  ('emanuel43',           '_e&ZIU0Ys8',    'athlete'),
-  ('larapinto',           'SZA0lPLu+_',    'admin'),
-  ('ninthe55',            'Q*2YLl$vp&',    'admin'),
-  ('dmoraes',             '4aL5P$8W*b',    'coach'),
-  ('sofialamas',          'FY52S^mi8+',    'coach'),
-  ('nicole52',            'P$9CQLmQC$',    'athlete'),
-  ('corinne88',           '*FbJVkfp@9',    'admin'),
-  ('rcomisso',            '$@SwdIju0g',    'athlete'),
-  ('whitney78',           'tDE5FZdo&6',    'coach'),
-  ('ybailey',             'USs4Jj_d+^',    'coach'),
-  ('derrick99',           's4$3CMBvxy',    'coach'),
-  ('mitchell01',          '_oHurnv#n9',    'athlete'),
-  ('danielroland',        'r)P8QpgZf*',    'admin'),
-  ('glaunay',             '^yNvMvL7C1',    'athlete'),
-  ('davirios',            'IP7eBJtfX@',    'coach'),
-  ('zvan-der-loo',        'cWYhREt(_3',    'admin'),
-  ('melissa71',           '_sK3WIsTbA',    'athlete'),
-  ('williamsmelvin',      'y891_ZBc@r',    'admin'),
-  ('diego28',             'y&8ExfJG4M',    'admin'),
-  ('xbonneau',            '!#GecgH53p',    'admin')
-) AS u(username,password,role);
+    ud.username,
+    ud.username || '@athletica.com', -- Generar email
+    'password123', -- Contraseña fija
+    ud.role,
+    CASE
+        WHEN ud.role = 'athlete' THEN an.athlete_id
+        ELSE NULL
+    END as athlete_id,
+    CASE
+        WHEN ud.role = 'coach' THEN (SELECT id FROM olympus.coaches ORDER BY random() LIMIT 1)
+        ELSE NULL
+    END as coach_id
+FROM users_data ud
+-- Unimos usuarios de tipo atleta con un atleta único
+LEFT JOIN athletes_numbered an ON ud.role = 'athlete' AND an.rn = (
+    SELECT count(*)
+    FROM users_data
+    WHERE role = 'athlete' AND rn <= ud.rn
+);
